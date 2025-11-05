@@ -11,10 +11,9 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://reviews-app-25.web.app', 'https://review-app-25.firebaseapp.com'],
+  origin: ['http://localhost:3000', 'https://reviews-app-25.web.app', 'https://reviews-app-25.firebaseapp.com'],
   credentials: true
 }));
-
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -67,8 +66,8 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Backend server running on http://localhost:${PORT}`);
-  console.log(`📡 API endpoints available at http://localhost:${PORT}/api`);
+// Start server - BIND TO 0.0.0.0 for Render
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Backend server running on port ${PORT}`);
+  console.log(`📡 API endpoints available at /api`);
 });
