@@ -1,5 +1,4 @@
 const admin = require('firebase-admin');
-const path = require('path');
 require('dotenv').config();
 
 // Initialize Firebase Admin SDK
@@ -7,16 +6,16 @@ if (!admin.apps.length) {
   try {
     let serviceAccount;
     
-    // Check if running on Render (cloud) or locally
+    // Check if we have the service account in environment variable (Render)
     if (process.env.FIREBASE_SERVICE_ACCOUNT) {
-      // Parse JSON from environment variable (for Render)
-      serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
       console.log('Using Firebase credentials from environment variable');
+      serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
     } else {
-      // Load from file (for local development)
+      // Fallback to file for local development
+      console.log('Using Firebase credentials from file');
+      const path = require('path');
       const serviceAccountPath = path.join(__dirname, '../serviceAccountKey.json');
       serviceAccount = require(serviceAccountPath);
-      console.log('Using Firebase credentials from file');
     }
     
     admin.initializeApp({
@@ -27,6 +26,7 @@ if (!admin.apps.length) {
     console.log('✅ Firebase Admin initialized successfully');
   } catch (error) {
     console.error('❌ Firebase Admin initialization error:', error.message);
+    console.error('Full error:', error);
     process.exit(1);
   }
 }
