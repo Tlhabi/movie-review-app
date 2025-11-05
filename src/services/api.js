@@ -1,9 +1,10 @@
 import axios from 'axios';
 import { auth } from '../firebase';
 
-const API_BASE_URL = '/api';
+// For local development, use localhost
+// For production, you would use your deployed backend URL
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://movie-review-app-backend-xxxx.onrender.com.api';
 
-// Create axios instance
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
@@ -15,11 +16,28 @@ const api = axios.create({
 api.interceptors.request.use(async (config) => {
   const user = auth.currentUser;
   if (user) {
-    const token = await user.getIdToken();
-    config.headers.Authorization = `Bearer ${token}`;
+    try {
+      const token = await user.getIdToken();
+      config.headers.Authorization = `Bearer ${token}`;
+    } catch (error) {
+      console.error('Error getting auth token:', error);
+    }
   }
   return config;
+}, (error) => {
+  return Promise.reject(error);
 });
+
+// Add response interceptor to handle errors
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.code === 'ERR_NETWORK') {
+      console.error('Backend server is not running. Please start it with: cd backend && npm run dev');
+    }
+    return Promise.reject(error);
+  }
+);
 
 // Movies API
 export const moviesAPI = {
@@ -39,12 +57,6 @@ export const reviewsAPI = {
   update: (reviewId, reviewData) => api.put(`/reviews/${reviewId}`, reviewData),
   delete: (reviewId) => api.delete(`/reviews/${reviewId}`),
   getStats: (movieId) => api.get(`/reviews/stats/${movieId}`)
-};
-
-// Auth API (optional - Firebase handles this on client)
-export const authAPI = {
-  getUserInfo: (uid) => api.get(`/auth/user/${uid}`),
-  deleteUser: (uid) => api.delete(`/auth/user/${uid}`)
 };
 
 export default api;

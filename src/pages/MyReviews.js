@@ -10,6 +10,7 @@ export default function MyReviews() {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchMyReviews();
   }, [currentUser]);

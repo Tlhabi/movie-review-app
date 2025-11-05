@@ -9,6 +9,7 @@ export default function BrowseMovies() {
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchPopularMovies();
   }, [currentPage]);
