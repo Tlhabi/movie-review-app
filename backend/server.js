@@ -11,24 +11,13 @@ const movieRoutes = require('./routes/movies');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// ------------------ Firebase Initialization ------------------
-try {
-const serviceAccount = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS);
-admin.initializeApp({
-credential: admin.credential.cert(serviceAccount),
-});
-console.log('✅ Firebase Admin initialized successfully');
-} catch (error) {
-console.error('❌ Firebase initialization failed:', error);
-}
-
 // ------------------ Middleware ------------------
-// For Render, allow all origins temporarily to detect port
+// Temporary: allow all origins to ensure Render port detection
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Logging middleware
+// Request logging
 app.use((req, res, next) => {
 console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
 next();
@@ -39,13 +28,13 @@ app.use('/api/auth', authRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/movies', movieRoutes);
 
-// Health check
+// Health check endpoint
 app.get('/api/health', (req, res) => {
 res.json({ status: 'OK', message: 'Movie Review API is running', timestamp: new Date().toISOString() });
 });
 
 // Root route for Render port detection
-app.get('/', (req, res) => res.send('Server is live!'));
+app.get('/', (req, res) => res.status(200).send('OK'));
 
 // 404 handler
 app.use((req, res) => res.status(404).json({ error: 'Endpoint not found' }));
@@ -59,6 +48,15 @@ res.status(500).json({ error: 'Internal server error', message: err.message });
 // ------------------ Start server ------------------
 app.listen(PORT, '0.0.0.0', () => {
 console.log(`🚀 Backend server running on port ${PORT}`);
+
+// Initialize Firebase after server is listening
+try {
+const serviceAccount = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS);
+admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
+console.log('✅ Firebase Admin initialized successfully');
+} catch (err) {
+console.error('❌ Firebase initialization failed:', err);
+}
 });
 
 // Heartbeat to keep Render process alive
