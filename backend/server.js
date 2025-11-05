@@ -71,3 +71,5 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Backend server running on port ${PORT}`);
   console.log(`📡 API endpoints available at /api`);
 });
+
+setInterval(() => console.log("⏱️ Server heartbeat: still running..."), 10000);
