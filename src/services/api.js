@@ -2,8 +2,8 @@ import axios from 'axios';
 import { auth } from '../firebase';
 
 // For local development, use localhost
-// For production, you would use your deployed backend URL
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://movie-review-app-backend-xxxx.onrender.com.api';
+// For production, use your deployed backend URL
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -41,22 +41,22 @@ api.interceptors.response.use(
 
 // Movies API
 export const moviesAPI = {
-  getTrending: () => api.get('/movies/trending'),
-  getPopular: (page = 1) => api.get(`/movies/popular?page=${page}`),
-  search: (query) => api.get(`/movies/search?query=${encodeURIComponent(query)}`),
-  getDetails: (movieId) => api.get(`/movies/${movieId}`),
-  getCredits: (movieId) => api.get(`/movies/${movieId}/credits`),
-  getSimilar: (movieId) => api.get(`/movies/${movieId}/similar`)
+  getTrending: () => api.get('/api/movies/trending'),
+  getPopular: (page = 1) => api.get(`/api/movies/popular?page=${page}`),
+  search: (query) => api.get(`/api/movies/search?query=${encodeURIComponent(query)}`),
+  getDetails: (movieId) => api.get(`/api/movies/${movieId}`),
+  getCredits: (movieId) => api.get(`/api/movies/${movieId}/credits`),
+  getSimilar: (movieId) => api.get(`/api/movies/${movieId}/similar`)
 };
 
 // Reviews API
 export const reviewsAPI = {
-  getByMovie: (movieId) => api.get(`/reviews/movie/${movieId}`),
-  getByUser: (userId) => api.get(`/reviews/user/${userId}`),
-  create: (reviewData) => api.post('/reviews', reviewData),
-  update: (reviewId, reviewData) => api.put(`/reviews/${reviewId}`, reviewData),
-  delete: (reviewId) => api.delete(`/reviews/${reviewId}`),
-  getStats: (movieId) => api.get(`/reviews/stats/${movieId}`)
+  getByMovie: (movieId) => api.get(`/api/reviews/movie/${movieId}`),
+  getByUser: (userId) => api.get(`/api/reviews/user/${userId}`),
+  create: (reviewData) => api.post('/api/reviews', reviewData),
+  update: (reviewId, reviewData) => api.put(`/api/reviews/${reviewId}`, reviewData),
+  delete: (reviewId) => api.delete(`/api/reviews/${reviewId}`),
+  getStats: (movieId) => api.get(`/api/reviews/stats/${movieId}`)
 };
 
 export default api;
